@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  role      String   @default("user")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  apps      App[]
+  devices   DeviceInfo[]
+  banned    Boolean  @default(false)
+}
+
+model App {
+  id            Int      @id @default(autoincrement())
+  name          String
+  description   String
+  fileUrl       String
+  fileType      String
+  fileSize      Int
+  coverImageUrl String?
+  previewUrl    String?
+  videoUrl      String?
+  trimStart     Float?
+  trimEnd       Float?
+  downloads     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  userId        Int
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model DeviceInfo {
+  id               Int      @id @default(autoincrement())
+  userId           Int
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ip               String?
+  userAgent        String?
+  platform         String?
+  language         String?
+  timezone         String?
+  screenWidth      Int?
+  screenHeight     Int?
+  deviceMemory     Float?
+  hardwareConcurrency Int?
+  connectionType   String?
+  batteryLevel     Float?
+  batteryCharging  Boolean?
+  touchSupported   Boolean?
+  latitude         Float?
+  longitude        Float?
+  createdAt        DateTime @default(now())
+}
